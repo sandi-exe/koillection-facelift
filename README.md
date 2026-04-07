@@ -1,2 +1,2 @@
 # koillection-facelift
-A mod to Koillection, collection manager
+A UI mod for Koillection, collection manager
