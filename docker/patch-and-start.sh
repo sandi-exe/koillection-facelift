@@ -70,7 +70,32 @@ patch_collection_editor_css() {
   done
 }
 
+patch_collection_entity_size() {
+  TARGET="/app/public/src/Entity/Collection.php"
+
+  [ -f "$TARGET" ] || fail "Target file not found: $TARGET"
+
+  if grep -Fq "maxWidth: 600, maxHeight: 600" "$TARGET"; then
+    log "Collection entity size patch already present"
+    return
+  fi
+
+  if grep -Fq "maxWidth: 200, maxHeight: 200" "$TARGET"; then
+    log "Expected upstream Collection entity upload size found, applying patch"
+    sed -i 's/maxWidth: 200, maxHeight: 200/maxWidth: 600, maxHeight: 600/' "$TARGET"
+
+    if grep -Fq "maxWidth: 600, maxHeight: 600" "$TARGET"; then
+      log "Collection entity size patch applied successfully"
+    else
+      fail "Collection entity size patch verification failed"
+    fi
+  else
+    fail "Collection.php does not match expected upstream or patched code. Upstream may have changed."
+  fi
+}
+
 patch_php_thumbnails
+patch_collection_entity_size
 patch_collection_editor_js
 patch_collection_editor_css
 
