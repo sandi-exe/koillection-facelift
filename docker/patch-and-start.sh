@@ -8,11 +8,11 @@ PATCHED_SMALL='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '
 PATCHED_LARGE='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $largeThumbnailFileName, 900, $thumbnailFormat)'
 
 log() {
-  printf '[start-n-patch] %s\n' "$1"
+  printf '[patch-n-start] %s\n' "$1"
 }
 
 fail() {
-  printf '[start-n-patch] PATCH ERROR: %s\n' "$1" >&2
+  printf '[patch-n-start] PATCH ERROR: %s\n' "$1" >&2
   exit 1
 }
 
