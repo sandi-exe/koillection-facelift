@@ -38,81 +38,36 @@ patch_php_thumbnails() {
 }
 
 patch_collection_editor_js() {
-  JS_TARGET="$(grep -Ril 'viewport:{width:150,height:150,type:"circle"}' /app/public/public/build 2>/dev/null | head -n 1 || true)"
-  [ -n "$JS_TARGET" ] || fail "Could not find compiled JS bundle for collection thumbnail editor"
+  JS_FILES="$(grep -Ril 'size:{width:200,height:200}' /app/public/public/build 2>/dev/null || true)"
+  log "JS files found: $JS_FILES"
+  [ -n "$JS_FILES" ] || fail "Could not find compiled JS with Croppie export size"
 
-  if grep -Fq 'viewport:{width:220,height:220,type:"square"}' "$JS_TARGET" && \
-     grep -Fq 'boundary:{width:280,height:280}' "$JS_TARGET" && \
-     grep -Fq 'size:{width:800,height:800}' "$JS_TARGET"; then
-    log "Collection editor JS patch already present in $JS_TARGET"
-    return
-  fi
-
-  if grep -Fq 'viewport:{width:150,height:150,type:"circle"}' "$JS_TARGET" && \
-     grep -Fq 'boundary:{width:200,height:200}' "$JS_TARGET" && \
-     grep -Fq 'size:{width:200,height:200}' "$JS_TARGET"; then
-    log "Expected upstream collection editor JS found in $JS_TARGET, applying patch"
-
-    sed -i 's/viewport:{width:150,height:150,type:"circle"}/viewport:{width:220,height:220,type:"square"}/' "$JS_TARGET"
-    sed -i 's/boundary:{width:200,height:200}/boundary:{width:280,height:280}/' "$JS_TARGET"
-    sed -i 's/size:{width:200,height:200}/size:{width:600,height:600}/' "$JS_TARGET"
-    sed -i 's/\.querySelector(".cr-vp-circle")/.querySelector(".cr-viewport")/' "$JS_TARGET"
-
-    if grep -Fq 'viewport:{width:220,height:220,type:"square"}' "$JS_TARGET" && \
-       grep -Fq 'boundary:{width:280,height:280}' "$JS_TARGET" && \
-       grep -Fq 'size:{width:600,height:600}' "$JS_TARGET"; then
-      log "Collection editor JS patch applied successfully"
-    else
-      fail "Collection editor JS patch attempt ran, but verification failed"
+  for f in $JS_FILES; do
+    if grep -Fq 'size:{width:600,height:600}' "$f"; then
+      log "Collection editor JS already patched in $f"
+      continue
     fi
-  else
-    fail "Compiled collection editor JS does not match expected upstream or patched code. Upstream may have changed."
-  fi
+
+    log "Patching collection editor JS in $f"
+    sed -i 's/viewport:{width:150,height:150,type:"circle"}/viewport:{width:220,height:220,type:"square"}/g' "$f"
+    sed -i 's/boundary:{width:200,height:200}/boundary:{width:280,height:280}/g' "$f"
+    sed -i 's/size:{width:200,height:200}/size:{width:600,height:600}/g' "$f"
+    sed -i 's/\.querySelector(".cr-vp-circle")/.querySelector(".cr-viewport")/g' "$f"
+  done
 }
 
 patch_collection_editor_css() {
-  CROPPY_CSS="$(grep -Ril '\.croppie-container \.cr-vp-circle{border-radius:50%}' /app/public/public/build 2>/dev/null | head -n 1 || true)"
-  APP_CSS="$(grep -Ril '\.content-wrapper \.title-block \.thumbnail{border-radius:100%' /app/public/public/build 2>/dev/null | head -n 1 || true)"
+  CSS_FILES="$(grep -Ril 'croppie-preview img{border-radius:100%' /app/public/public/build 2>/dev/null || true)"
+  log "CSS files found: $CSS_FILES"
+  [ -n "$CSS_FILES" ] || fail "Could not find compiled CSS with Croppie preview rule"
 
-  [ -n "$CROPPY_CSS" ] || fail "Could not find compiled Croppie CSS bundle"
-  [ -n "$APP_CSS" ] || fail "Could not find compiled app CSS bundle"
-
-  if grep -Fq '.croppie-container .cr-vp-circle{border-radius:0}' "$CROPPY_CSS" && \
-     grep -Fq '.croppie-preview img{border-radius:8px' "$APP_CSS" && \
-     grep -Fq '.content-wrapper .title-block .thumbnail{border-radius:8px' "$APP_CSS" && \
-     grep -Fq '.collections img{border-radius:8px' "$APP_CSS"; then
-    log "Collection editor CSS patch already present"
-    return
-  fi
-
-  if grep -Fq '.croppie-container .cr-vp-circle{border-radius:50%}' "$CROPPY_CSS"; then
-    log "Expected upstream Croppie CSS found in $CROPPY_CSS, applying patch"
-    sed -i 's/\.croppie-container \.cr-vp-circle{border-radius:50%}/.croppie-container .cr-vp-circle{border-radius:0}/' "$CROPPY_CSS"
-  else
-    fail "Croppie CSS does not match expected upstream or patched code. Upstream may have changed."
-  fi
-
-  if grep -Fq '.cr-vp-circle.fa:before{' "$APP_CSS" && \
-     grep -Fq '.content-wrapper .title-block .thumbnail{border-radius:100%' "$APP_CSS" && \
-     grep -Fq '.collections img{border-radius:100%' "$APP_CSS" && \
-     grep -Fq '.croppie-preview img{border-radius:100%' "$APP_CSS"; then
-    log "Expected upstream app CSS found in $APP_CSS, applying patch"
-
-    sed -i 's/\.cr-vp-circle\.fa:before{/\.cr-viewport.fa:before{/' "$APP_CSS"
-    sed -i 's/\.content-wrapper \.title-block \.thumbnail{border-radius:100%/.content-wrapper .title-block .thumbnail{border-radius:8px/' "$APP_CSS"
-    sed -i 's/\.collections img{border-radius:100%/.collections img{border-radius:8px/' "$APP_CSS"
-    sed -i 's/\.croppie-preview img{border-radius:100%/.croppie-preview img{border-radius:8px/' "$APP_CSS"
-
-    if grep -Fq '.croppie-preview img{border-radius:8px' "$APP_CSS" && \
-       grep -Fq '.content-wrapper .title-block .thumbnail{border-radius:8px' "$APP_CSS" && \
-       grep -Fq '.collections img{border-radius:8px' "$APP_CSS"; then
-      log "App CSS patch applied successfully"
-    else
-      fail "App CSS patch attempt ran, but verification failed"
-    fi
-  else
-    fail "App CSS does not match expected upstream or patched code. Upstream may have changed."
-  fi
+  for f in $CSS_FILES; do
+    log "Patching collection editor CSS in $f"
+    sed -i 's/\.croppie-preview img{border-radius:100%/.croppie-preview img{border-radius:8px/g' "$f"
+    sed -i 's/\.content-wrapper \.title-block \.thumbnail{border-radius:100%/.content-wrapper .title-block .thumbnail{border-radius:8px/g' "$f"
+    sed -i 's/\.collections img{border-radius:100%/.collections img{border-radius:8px/g' "$f"
+    sed -i 's/\.cr-vp-circle\.fa:before{/\.cr-viewport.fa:before{/g' "$f"
+  done
 }
 
 patch_php_thumbnails
