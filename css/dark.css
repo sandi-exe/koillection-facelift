@@ -182,6 +182,17 @@
     }
 }
 
+/* Tighten vertical spacing between sections */
+.content-block {
+    padding-top: 10px;
+}
+.block-element:not(:last-of-type) {
+    padding-bottom: 10px;
+}
+h2.header, h3.header {
+    padding: 10px 0 !important;
+}
+
 /* iPhone / small phones: force two side by side */
 @media (max-width: 430px) {
     .grid-container-collections {

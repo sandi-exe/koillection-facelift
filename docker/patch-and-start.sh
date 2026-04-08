@@ -94,9 +94,55 @@ patch_collection_entity_size() {
   fi
 }
 
+patch_collection_page_order() {
+  TARGET="/app/public/templates/App/Collection/show.html.twig"
+  [ -f "$TARGET" ] || fail "Collection page template not found: $TARGET"
+
+  log "Collection page template found: $TARGET"
+
+  if grep -Fq '__PATCH_INFO_MOVED_TO_BOTTOM__' "$TARGET"; then
+    log "Collection page order patch already present"
+    return
+  fi
+
+  log "Applying collection page order patch"
+
+  perl -0777 -i -pe '
+    my $marker = "__PATCH_INFO_MOVED_TO_BOTTOM__";
+
+    if (index($_, $marker) >= 0) {
+      next;
+    }
+
+    my $start = index($_, "<!-- Additional data -->");
+    die "[patch-n-start] PATCH ERROR: Could not find Additional data section start\n"
+      if $start < 0;
+
+    my $next = index($_, "<!-- Child collections -->", $start);
+    die "[patch-n-start] PATCH ERROR: Could not find Child collections section after Additional data\n"
+      if $next < 0;
+
+    my $info_block = substr($_, $start, $next - $start);
+    substr($_, $start, $next - $start, "");
+
+    my $insert_at = rindex($_, "        </div>\n    </div>");
+    die "[patch-n-start] PATCH ERROR: Could not find end of content block safely\n"
+      if $insert_at < 0;
+
+    substr($_, $insert_at, 0, $info_block . "            <!-- " . $marker . " -->\n");
+  ' "$TARGET"
+
+  if grep -Fq '__PATCH_INFO_MOVED_TO_BOTTOM__' "$TARGET"; then
+    log "Collection page order patch applied successfully"
+  else
+    fail "Collection page order patch verification failed"
+  fi
+}
+
 patch_php_thumbnails
 patch_collection_entity_size
 patch_collection_editor_js
 patch_collection_editor_css
+patch_collection_page_order
 
 exec sh /app/public/docker/entrypoint.sh
