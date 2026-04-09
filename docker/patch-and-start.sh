@@ -100,39 +100,53 @@ patch_collection_page_order() {
 
   log "Collection page template found: $TARGET"
 
-  if grep -Fq '__PATCH_INFO_MOVED_TO_BOTTOM__' "$TARGET"; then
+  if perl -0777 -ne '
+    my $t = $_;
+    my $child = index($t, "<!-- Child collections -->");
+    my $items = index($t, "<!-- Collection'\''s items -->");
+    my $info  = index($t, "<!-- Additional data -->");
+    exit(($child >= 0 && $items >= 0 && $info >= 0 && $child < $items && $items < $info) ? 0 : 1);
+  ' "$TARGET"; then
     log "Collection page order patch already present"
     return
+  fi
+
+  if ! perl -0777 -ne '
+    my $t = $_;
+    my $info  = index($t, "<!-- Additional data -->");
+    my $child = index($t, "<!-- Child collections -->");
+    my $items = index($t, "<!-- Collection'\''s items -->");
+    exit(($info >= 0 && $child >= 0 && $items >= 0 && $info < $child && $child < $items) ? 0 : 1);
+  ' "$TARGET"; then
+    fail "Template does not match expected upstream collection section order. Upstream may have changed."
   fi
 
   log "Applying collection page order patch"
 
   perl -0777 -i -pe '
-    my $marker = "__PATCH_INFO_MOVED_TO_BOTTOM__";
-
-    if (index($_, $marker) >= 0) {
-      next;
-    }
-
-    my $start = index($_, "<!-- Additional data -->");
-    die "[patch-n-start] PATCH ERROR: Could not find Additional data section start\n"
-      if $start < 0;
-
-    my $next = index($_, "<!-- Child collections -->", $start);
-    die "[patch-n-start] PATCH ERROR: Could not find Child collections section after Additional data\n"
-      if $next < 0;
-
-    my $info_block = substr($_, $start, $next - $start);
-    substr($_, $start, $next - $start, "");
-
-    my $insert_at = rindex($_, "        </div>\n    </div>");
-    die "[patch-n-start] PATCH ERROR: Could not find end of content block safely\n"
-      if $insert_at < 0;
-
-    substr($_, $insert_at, 0, $info_block . "            <!-- " . $marker . " -->\n");
+    s@
+(\s*<!-- Additional data -->\s*
+\s*\{\% if collection\.data is not empty or getCachedValues\(collection\)\.prices\|default\(null\) is not empty \%\}
+.*?
+\s*\{\% endif \%\})
+(\s*<!-- Child collections -->\s*
+\s*\{\% if children is not empty \%\}
+.*?
+\s*\{\% endif \%\})
+(\s*<!-- Collection'\''s items -->\s*
+\s*\{\% if items is not empty \%\}
+.*?
+\s*\{\% endif \%\})
+@$2$3$1@s
   ' "$TARGET"
 
-  if grep -Fq '__PATCH_INFO_MOVED_TO_BOTTOM__' "$TARGET"; then
+  if perl -0777 -ne '
+    my $t = $_;
+    my $child = index($t, "<!-- Child collections -->");
+    my $items = index($t, "<!-- Collection'\''s items -->");
+    my $info  = index($t, "<!-- Additional data -->");
+    exit(($child >= 0 && $items >= 0 && $info >= 0 && $child < $items && $items < $info) ? 0 : 1);
+  ' "$TARGET"; then
     log "Collection page order patch applied successfully"
   else
     fail "Collection page order patch verification failed"
