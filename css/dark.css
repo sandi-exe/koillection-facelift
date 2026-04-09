@@ -195,6 +195,22 @@ h2.header, h3.header {
 
 /* iPhone / small phones: force two side by side */
 @media (max-width: 430px) {
+    .container-fluid,
+    .container-limited {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    header.expanded,
+    .content-wrapper,
+    .collection-header,
+    .content-block,
+    .navigation-block,
+    footer {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
     .grid-container-collections {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         gap: 12px !important;
@@ -242,5 +258,102 @@ h2.header, h3.header {
     #collection-items .item-name {
         margin-top: 6px !important;
         font-size: 0.95rem !important;
+    }
+}
+
+/* Item data panel */
+.data {
+    width: min(100%, 400px) !important;
+    max-width: 400px !important;
+}
+
+/* Each row gets a separator line */
+.data .datum-row {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+    padding: 10px 0 !important;
+    border-bottom: 1px solid var(--background-color-light) !important;
+}
+
+/* Section rows */
+.data .datum-row:has(.datum-section) {
+    display: block !important;
+    padding-top: 16px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 2px solid var(--font-color-medium) !important;
+    margin-top: 8px !important;
+}
+
+/* Section header text */
+.data .datum-section {
+    display: block !important;
+    font-weight: 700 !important;
+    font-size: 1.05rem !important;
+    padding-bottom: 2px !important;
+    text-align: left !important;
+}
+
+/* Left label */
+.data .datum-row .label {
+    flex: 0 0 48% !important;
+    margin: 0 !important;
+    text-align: left !important;
+    font-weight: 600 !important;
+}
+
+/* Hide the empty helper span Koillection inserts */
+.data .datum-row > span[data-value] {
+    display: none !important;
+}
+
+/* Right value text, lists, and other value content */
+.data .datum-row > :not(.label):not([data-value]) {
+    flex: 1 1 auto !important;
+    text-align: right !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+}
+
+/* Lists on the value side */
+.data .datum-row .datum-list {
+    margin: 0 !important;
+    padding-left: 0 !important;
+    list-style-position: inside !important;
+    text-align: right !important;
+}
+
+/* Small screens */
+@media (max-width: 600px) {
+    .data {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .data .datum-row {
+        display: flex !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+    }
+
+    .data .datum-row .label {
+        flex: 0 0 42% !important;
+        margin: 0 !important;
+        text-align: left !important;
+        min-width: 0 !important;
+    }
+
+    .data .datum-row > :not(.label):not([data-value]) {
+        flex: 0 1 58% !important;
+        text-align: right !important;
+        min-width: 0 !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+    }
+
+    .data .datum-row .datum-list {
+        text-align: right !important;
     }
 }
