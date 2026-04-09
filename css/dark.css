@@ -34,6 +34,11 @@
     --data-row-padding-botton: 6px;
     --data-row-padding-left: 4px;
 
+    --top-of-content-padding: 15px;
+    --section-header-padding-top: 15px;
+    --section-header-padding-botton: 10px;
+    --section-padding-bottom: 10px;
+
     --sub-collections-item-height: 250px;
     --sub-collections-item-width: 250px;
     --sub-collection-img-border-rad: 7%;
@@ -68,12 +73,36 @@
     }
 }
 
+/* Section Padding/Spacing */
+.content-block {
+    padding-top: var(--top-of-content-padding);
+    text-align: left;
+}
+
+h2.header, h3.header {
+    line-height: 100%;
+    margin: 0;
+    padding: var(--section-header-padding-top) 0  var(--section-header-padding-botton) 0 !important;
+}
+
+.block-element:not(:last-of-type) {
+    padding-bottom: var(--section-padding-bottom);
+}
+
+
 /* -------------------------------------------------------------------------- */
 /* sub-collections thumbnail sizing                                               */
 /* -------------------------------------------------------------------------- */
 
+/* auto-fit for small lists */
 .grid-container-collections {
-    grid-template-columns: repeat(auto-fill, minmax(var(--sub-collections-item-width), 1fr));
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(var(--sub-collections-item-width), 1fr));
+}
+/* auto-fill for bigger lists */
+.grid-container-collections:has(> :nth-child(3)) {
+  grid-template-columns: repeat(auto-fill, minmax(var(--sub-collections-item-width), 1fr));
 }
 
 .collections .collection-circle-thumbnail {
@@ -92,8 +121,13 @@
 /* items thumbnail sizing                                                     */
 /* -------------------------------------------------------------------------- */
 
+/* auto-fit for small lists */
 .grid-container-items {
-    grid-template-columns: repeat(auto-fill,minmax(var(--collection-item-width),1fr))
+    grid-template-columns: repeat(auto-fit, minmax(var(--collection-item-width), 1fr));
+}
+/* auto-fill for bigger lists */
+.grid-container-items:has(> :nth-child(3)) {
+    grid-template-columns: repeat(auto-fill, minmax(var(--collection-item-width), 1fr));
 }
 
 #collection-items .collection-item {
@@ -102,7 +136,8 @@
     max-width: var(--collection-item-width);
     min-height: 0;
     max-height: none;
-    margin: 0 7px 10px;
+    /* margin: 0 7px 10px; */
+    margin: 0 auto 10px;
     display: flex;
     align-items: center;
     justify-content: center;
