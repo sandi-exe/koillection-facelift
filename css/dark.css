@@ -18,6 +18,19 @@
     --warning-color: #e53935;
 }
 
+html,
+body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: clip !important;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 /* Collection header image */
 .title-block img.thumbnail.avatar,
 .title-block .thumbnail.color-avatar {
@@ -195,6 +208,40 @@ h2.header, h3.header {
 
 /* iPhone / small phones: force two side by side */
 @media (max-width: 430px) {
+    html,
+    body,
+    .app,
+    .main,
+    .content-wrapper,
+    .container-fluid,
+    .container-limited,
+    .item-wrapper,
+    .item-image-container,
+    .slider-container,
+    .slider-frame,
+    .slider-elements,
+    .collection-header,
+    .content-block,
+    .navigation-block,
+    footer,
+    header,
+    header.expanded,
+    .breadcrumb-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: clip !important;
+    }
+
+    .container-fluid,
+    .container-limited,
+    .collection-header,
+    .content-block,
+    .navigation-block,
+    footer,
+    .breadcrumb-wrapper {
+        box-sizing: border-box !important;
+    }
+
     .container-fluid,
     .container-limited {
         padding-left: 8px !important;
@@ -382,5 +429,20 @@ h2.header, h3.header {
 
     .data .datum-row .datum-list {
         text-align: right !important;
+    }
+
+    .data .datum-row:has(.datum-list) {
+        display: block !important;
+    }
+
+    .data .datum-row:has(.datum-list) .label {
+        display: block !important;
+        margin-bottom: 4px !important;
+        text-align: left !important;
+    }
+
+    .data .datum-row:has(.datum-list) .datum-list {
+        display: block !important;
+        text-align: left !important;
     }
 }
