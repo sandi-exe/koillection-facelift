@@ -201,8 +201,6 @@ h2.header, h3.header {
         padding-right: 8px !important;
     }
 
-    header.expanded,
-    .content-wrapper,
     .collection-header,
     .content-block,
     .navigation-block,
@@ -309,7 +307,7 @@ h2.header, h3.header {
 }
 
 /* Right value text, lists, and other value content */
-.data .datum-row > :not(.label):not([data-value]) {
+.data .datum-row > :not(.label):not(.datum-section):not([data-value]) {
     flex: 1 1 auto !important;
     text-align: right !important;
     margin: 0 !important;
@@ -322,6 +320,35 @@ h2.header, h3.header {
     padding-left: 0 !important;
     list-style-position: inside !important;
     text-align: right !important;
+}
+
+/* Multi-value fields: show values as comma-separated text under the label */
+.data .datum-row:has(.datum-list) {
+    display: block !important;
+}
+
+.data .datum-row:has(.datum-list) .label {
+    display: block !important;
+    margin-bottom: 4px !important;
+    text-align: left !important;
+}
+
+.data .datum-row:has(.datum-list) .datum-list {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+    text-align: left !important;
+}
+
+.data .datum-row:has(.datum-list) .datum-list li {
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.data .datum-row:has(.datum-list) .datum-list li:not(:last-child)::after {
+    content: ", " !important;
 }
 
 /* Small screens */
@@ -345,7 +372,7 @@ h2.header, h3.header {
         min-width: 0 !important;
     }
 
-    .data .datum-row > :not(.label):not([data-value]) {
+    .data .datum-row > :not(.label):not(.datum-section):not([data-value]) {
         flex: 0 1 58% !important;
         text-align: right !important;
         min-width: 0 !important;
