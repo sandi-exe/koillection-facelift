@@ -312,15 +312,25 @@ h2.header, h3.header {
     font-weight: 700 !important;
 }
 
-/* Multi-value fields: render list values as comma-separated text below label */
-.data .datum-row:has(.datum-list) {
+/* Multi-value fields and mulit-line text fields: render list values as comma-separated text below label */
+.data .datum-row:has(.datum-list),
+.data .datum-row:has(br) {
     display: block !important;
 }
 
-.data .datum-row:has(.datum-list) .label {
+.data .datum-row:has(.datum-list) .label,
+.data .datum-row:has(br) .label {
     display: block !important;
     margin-bottom: 0px !important;
     text-align: left !important;
+}
+
+/* Indent text in mulit-line text fields */
+.data .datum-row:has(br) {
+    padding-left: 12px !important;
+}
+.data .datum-row:has(br) .label {
+    margin-left: -8px !important;
 }
 
 .data .datum-row:has(.datum-list) .datum-list {
