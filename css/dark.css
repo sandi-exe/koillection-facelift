@@ -46,6 +46,9 @@
     --collection-item-height: 250px; /* not needed - see width */
     --collection-item-width: 250px;
     --collection-img-border-rad: 7%;
+
+    --slider-thumb-size: 100px;
+    --slider-thumb-radius: 8px;
 }
 
 
@@ -349,4 +352,49 @@ h2.header, h3.header {
 
 .data .datum-row:has(.datum-list) .datum-list li:not(:last-child)::after {
     content: ", " !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Item page slider thumbnail media                                           */
+/* -------------------------------------------------------------------------- */
+
+/* Leave the original strip layout alone, only normalize the media itself */
+.slider-elements img,
+.slider-elements video {
+    display: block !important;
+    width: 100px !important;
+    height: 100px !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+    vertical-align: middle !important;
+}
+
+.slider-elements video {
+    background: #1f1f1f !important;
+}
+
+/* Hide stray native controls in thumbnail context */
+.slider-elements video::-webkit-media-controls,
+.slider-elements video::-webkit-media-controls-panel,
+.slider-elements video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+    -webkit-appearance: none !important;
+}
+
+/* Keep the play icon, but only on video tiles */
+.slider-elements li:has(video) {
+    position: relative;
+}
+
+.slider-elements li:has(video)::after {
+    content: "▶";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
