@@ -1,7 +1,11 @@
 :root {
+    /* Theme colors */
+    /* Should be the same as --background-color */
     --surface-color: #2a2a2a;
     --background-color: #2a2a2a;
     --background-color-light: #5e5e5e;
+
+    /* Mainly used for menu and header color */
     --background-color-dark: #222222;
 
     --font-color-main: #cccccc;
@@ -9,146 +13,419 @@
     --font-color-light: #7d7f82;
     --font-color-lightest: #7d7f82;
 
+    /* Buttons, hovers */
     --primary-color: #009688;
     --primary-color-light: #1AB0A2;
     --primary-color-lightest: #80cbc4;
     --primary-color-dark: #006355;
 
+    /* Mainly used for icons and titles */
     --secondary-color: #009688;
+
+    /* Cancel buttons and error messages */
     --warning-color: #e53935;
+
+
+    /* Shared sizing tokens */
+    --data-panel-width: 400px;
+    --data-row-datavalue-gap: 16px;
+    --data-row-padding-top: 6px;
+    --data-row-padding-right: 4px;
+    --data-row-padding-bottom: 6px;
+    --data-row-padding-left: 4px;
+
+    --top-of-content-padding: 15px;
+    --section-header-padding-top: 15px;
+    --section-header-padding-bottom: 10px;
+    --section-padding-bottom: 10px;
+
+    --sub-collections-item-height: 250px;
+    --sub-collections-item-width: 250px;
+    --sub-collection-img-border-rad: 7%;
+
+    --collection-item-height: 250px; /* not needed - see width */
+    --collection-item-width: 250px;
+    --collection-img-border-rad: 7%;
+
+    --slider-img-border-rad: 10px;
+    --slider-img-max-width: 400px;
+    --slider-thumb-size: 100px;
+    --slider-thumb-radius: 8px;
+  
 }
 
-/* Collection header image */
-.title-block img.thumbnail.avatar {
-    width: 96px;
-    height: 96px;
-    object-fit: cover;
-    border-radius: 16px;
+/* -------------------------------------------------------------------- */
+/* Top level adjustments                                                */
+/* -------------------------------------------------------------------- */
+
+/* Reduce main content padding on smaller screens */
+.content-wrapper .container-fluid {
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    margin-bottom: 15px;
+    padding: min(4% , 35px);
 }
 
-/* Child collection tiles */
+/* Required so item-image-container doesn't spill out pf the content-wrapper on small screens */
+@media (max-width: 749px) {
+    .item-image-container,
+    .tag-image-container {
+        float: none;
+        margin: 0 auto 20px;
+        width: fit-content;
+        max-width: 100%;
+    }
+}
+
+/* Section Padding/Spacing */
+.content-block {
+    padding-top: var(--top-of-content-padding);
+    text-align: left;
+}
+
+h2.header, h3.header {
+    line-height: 100%;
+    margin: 0;
+    padding: var(--section-header-padding-top) 0  var(--section-header-padding-bottom) 0 !important;
+}
+
+.block-element:not(:last-of-type) {
+    padding-bottom: var(--section-padding-bottom);
+}
+
+/* -------------------------------------------------------------------- */
+/* sub-collections thumbnail sizing                                     */
+/* -------------------------------------------------------------------- */
+
 .grid-container-collections {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)) !important;
-    gap: 20px !important;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(var(--sub-collections-item-width), 1fr));
 }
 
-.grid-container-collections .collection-element {
-    width: auto !important;
-    min-width: 0 !important;
+.grid-container-collections:has(> :nth-child(3)) {
+    grid-template-columns: repeat(auto-fill, minmax(var(--sub-collections-item-width), 1fr));
 }
 
-.grid-container-collections .collection-element .collection-circle-thumbnail {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100px !important;
-    height: 100px !important;
-    border-radius: 18px !important;
-    overflow: hidden !important;
+.collections .collection-element {
+    text-align: center;
+    min-width: 0;
 }
 
-.grid-container-collections .collection-element .color-avatar {
+.collections .collection-circle-thumbnail {
+    display: block !important;
     width: 100% !important;
-    height: 100% !important;
-    border-radius: 18px !important;
-}
-
-/* Item grid */
-#collection-items {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
-    gap: 28px !important;
-    align-items: start !important;
-}
-
-/* Outer wrapper for each item */
-#collection-items > div {
-    width: 100% !important;
-    min-width: 0 !important;
-}
-
-/* Thumbnail box */
-#collection-items .collection-item {
-    width: 100% !important;
+    max-width: var(--sub-collections-item-width) !important;
+    height: auto !important;
     aspect-ratio: 1 / 1 !important;
+    margin: 0 auto !important;
     overflow: hidden !important;
-    border-radius: 18px !important;
+    line-height: 0;
 }
 
-/* Fill the box */
-#collection-items .collection-item a {
+.collections .collection-circle-thumbnail img {
     display: block !important;
     width: 100% !important;
     height: 100% !important;
-}
-
-#collection-items .collection-item img {
-    display: block !important;
-    width: 100% !important;
-    height: 100% !important;
+    min-width: 0 !important;
     max-width: none !important;
+    min-height: 0 !important;
+    max-height: none !important;
     object-fit: cover !important;
-    border-radius: 18px !important;
+    border-radius: var(--sub-collection-img-border-rad) !important;
 }
 
-/* Item names */
-#collection-items .item-name {
-    display: block !important;
-    margin-top: 10px !important;
-    text-align: left !important;
-    line-height: 1.3 !important;
-}
-
-/* Desktop: larger cards and more spacing */
-@media (min-width: 1200px) {
-    #collection-items {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
-        gap: 32px !important;
-    }
-
-    .container-limited {
-        max-width: 1400px !important;
-    }
-}
-
-/* Tablet */
-@media (max-width: 900px) {
-    #collection-items {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-        gap: 20px !important;
-    }
-
-    .grid-container-collections {
-        gap: 16px !important;
-    }
-}
-
-/* iPhone / small phones: force two side by side */
-@media (max-width: 430px) {
-    #collection-items {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 12px !important;
-    }
-
+@media (max-width: 749px) {
     .grid-container-collections {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 12px !important;
+        gap: 10px !important;
     }
 
-    .grid-container-collections .collection-element .collection-circle-thumbnail {
+    .collections .collection-circle-thumbnail {
+        max-width: none !important;
         width: 100% !important;
         height: auto !important;
         aspect-ratio: 1 / 1 !important;
+        margin: 0 !important;
     }
 
-    .title-block img.thumbnail.avatar {
-        width: 72px;
-        height: 72px;
+    .collections .collection-circle-thumbnail img {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: none !important;
+        max-height: none !important;
+        object-fit: cover !important;
+    }
+}
+
+/* -------------------------------------------------------------------- */
+/* items thumbnail sizing                                               */
+/* -------------------------------------------------------------------- */
+
+/* auto-fit for small lists */
+.grid-container-items {
+    grid-template-columns: repeat(auto-fit, minmax(var(--collection-item-width), 1fr));
+}
+/* auto-fill for bigger lists */
+.grid-container-items:has(> :nth-child(3)) {
+    grid-template-columns: repeat(auto-fill, minmax(var(--collection-item-width), 1fr));
+}
+
+#collection-items .collection-item {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    max-width: var(--collection-item-width);
+    min-height: 0;
+    max-height: none;
+    /* margin: 0 7px 10px; */
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#collection-items .collection-item a {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+#collection-items img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    object-fit: cover;
+    display: block;
+    border-radius: var(--collection-img-border-rad);
+    object-fit: cover;
+}
+
+@media (max-width: 749px) {
+    #collection-items.grid-container-items {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px;
     }
 
-    #collection-items .item-name {
-        margin-top: 6px !important;
-        font-size: 0.95rem !important;
+    #collection-items .collection-item {
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+        max-height: none;
+        margin: 0;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
     }
+
+    #collection-items .collection-item a {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #collection-items img {
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        max-height: none;
+        object-fit: cover;
+        display: block;
+    }
+
+    .item-name {
+        position: relative;
+    top: 0px;
+}
+}
+
+/* -------------------------------------------------------------------- */
+/* Item detail data panel                                               */
+/* -------------------------------------------------------------------- */
+.data {
+    width: min(100%, var(--data-panel-width)) !important;
+    max-width: var(--data-panel-width) !important;
+}
+
+.data .datum-row {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: var(--data-row-datavalue-gap) !important;
+    padding-top: var(--data-row-padding-top);
+    padding-right: var(--data-row-padding-right);
+    padding-bottom: var(--data-row-padding-bottom);
+    padding-left: var(--data-row-padding-left);
+    border-bottom: 1px solid var(--background-color-light) !important;
+}
+
+.data .datum-row .label {
+    flex: 0 0 48% !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+    text-align: left !important;
+    font-weight: 600 !important;
+}
+
+/* Hide Koillection's empty helper span in datum rows */
+.data .datum-row > span[data-value] {
+    display: none !important;
+}
+
+.data .datum-row > :not(.label):not(.datum-section):not([data-value]) {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    text-align: right !important;
+}
+
+.data .datum-row .file {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+}
+
+.data .datum-row .datum-list {
+    margin: 0 !important;
+    padding-left: 0 !important;
+    list-style-position: inside !important;
+    text-align: right !important;
+}
+
+/* Section rows */
+.data .datum-row:has(.datum-section) {
+    display: block !important;
+    margin-top: 8px !important;
+    padding-top: 16px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 2px solid var(--font-color-medium) !important;
+}
+
+.data .datum-section {
+    display: block !important;
+    padding-bottom: 2px !important;
+    text-align: left !important;
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+}
+
+/* Multi-value fields and mulit-line text fields: render list values as comma-separated text below label */
+.data .datum-row:has(.datum-list),
+.data .datum-row:has(br) {
+    display: block !important;
+}
+
+.data .datum-row:has(.datum-list) .label,
+.data .datum-row:has(br) .label {
+    display: block !important;
+    margin-bottom: 0px !important;
+    text-align: left !important;
+}
+
+/* Indent text in mulit-line text fields */
+.data .datum-row:has(br) {
+    padding-left: 12px !important;
+}
+.data .datum-row:has(br) .label {
+    margin-left: -8px !important;
+}
+
+.data .datum-row:has(.datum-list) .datum-list {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+    text-align: left !important;
+}
+
+.data .datum-row:has(.datum-list) .datum-list li {
+    display: inline !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.data .datum-row:has(.datum-list) .datum-list li:not(:last-child)::after {
+    content: ", " !important;
+}
+
+/* -------------------------------------------------------------------- */
+/* Item page slider thumbnail media                                     */
+/* -------------------------------------------------------------------- */
+
+/* Leave the original strip layout alone, only normalize the media itself */
+.slider-elements img,
+.slider-elements video {
+    display: block !important;
+    width: var(--slider-thumb-size) !important;
+    height: var(--slider-thumb-size) !important;
+    object-fit: cover !important;
+    border-radius: var(--slider-thumb-radius) !important;
+    vertical-align: middle !important;
+}
+
+.slider-elements video {
+    background: #1f1f1f !important;
+}
+
+/* Hide stray native controls in thumbnail context */
+.slider-elements video::-webkit-media-controls,
+.slider-elements video::-webkit-media-controls-panel,
+.slider-elements video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+    -webkit-appearance: none !important;
+}
+
+/* Keep the play icon, but only on video tiles */
+.slider-elements li:has(video) {
+    position: relative;
+}
+
+.slider-elements li:has(video)::after {
+    content: "▶";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Main image size */
+.slider-container .slider-frame img, .slider-container .slider-frame video {
+    max-width: var(--slider-img-max-width);
+    width: 100%;
+    border-radius: var(--slider-img-border-rad);
+}
+
+/* -------------------------------------------------------------------- */
+/* Collection page Info section toggle                                  */
+/* -------------------------------------------------------------------- */
+
+.collection-info-toggle {
+    display: block !important;
+}
+
+.collection-info-summary {
+    cursor: pointer !important;
+    user-select: none !important;
+    margin: 0 !important;
+    padding: var(--section-header-padding-top) 0 var(--section-header-padding-bottom) 0 !important;
+    color: var(--secondary-color) !important;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.collection-info-toggle > .row {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
