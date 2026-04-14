@@ -153,10 +153,118 @@ patch_collection_page_order() {
   fi
 }
 
+patch_collection_info_toggle() {
+  TARGET="/app/public/templates/App/Collection/show.html.twig"
+  TMP_FILE="$(mktemp)"
+
+  [ -f "$TARGET" ] || fail "Collection page template not found: $TARGET"
+
+  log "Collection page template found for simple info toggle patch: $TARGET"
+
+  if grep -Fq 'class="collection-info-toggle"' "$TARGET"; then
+    log "Collection info toggle patch already present"
+    rm -f "$TMP_FILE"
+    return
+  fi
+
+  if ! grep -Fq "<h2 class=\"header\">{{ 'title.infos'|trans }}</h2>" "$TARGET"; then
+    rm -f "$TMP_FILE"
+    fail "Could not find translated Info header in $TARGET"
+  fi
+
+  log "Applying simple collection info toggle patch"
+
+  awk '
+  BEGIN {
+    replaced_header = 0
+    in_info_block = 0
+    row_started = 0
+    details_closed = 0
+    row_depth = 0
+  }
+
+  {
+    if (!replaced_header && index($0, "<h2 class=\"header\">{{ '\''title.infos'\''|trans }}</h2>")) {
+      replaced_header = 1
+      in_info_block = 1
+
+      match($0, /^[[:space:]]*/)
+      indent = substr($0, RSTART, RLENGTH)
+
+      print indent "<details class=\"collection-info-toggle\">"
+      print indent "    <summary class=\"header collection-info-summary\">{{ '\''title.infos'\''|trans }}</summary>"
+      next
+    }
+
+    if (in_info_block && !row_started && $0 ~ /^[[:space:]]*<div class="row">[[:space:]]*$/) {
+      row_started = 1
+      row_depth = 1
+      print $0
+      next
+    }
+
+    if (in_info_block && row_started) {
+      line = $0
+
+      open_count = gsub(/<div[^>]*>/, "&", line)
+      close_count = gsub(/<\/div>/, "&", line)
+
+      row_depth += open_count
+      row_depth -= close_count
+
+      print $0
+
+      if (row_depth == 0 && !details_closed) {
+        match($0, /^[[:space:]]*/)
+        indent = substr($0, RSTART, RLENGTH)
+        sub(/    $/, "", indent)
+        print indent "</details>"
+
+        details_closed = 1
+        in_info_block = 0
+        row_started = 0
+      }
+      next
+    }
+
+    print $0
+  }
+
+  END {
+    if (!replaced_header) exit 2
+    if (!details_closed) exit 3
+  }
+  ' "$TARGET" > "$TMP_FILE" || {
+    status=$?
+    rm -f "$TMP_FILE"
+    if [ "$status" -eq 2 ]; then
+      fail "Could not patch translated Info header in $TARGET"
+    elif [ "$status" -eq 3 ]; then
+      fail "Could not find the end of the Info row wrapper in $TARGET"
+    else
+      fail "awk patch failed unexpectedly"
+    fi
+  }
+
+  mv "$TMP_FILE" "$TARGET"
+
+  log "Post-patch markers:"
+  grep -n 'collection-info-toggle\|collection-info-summary\|</details>\|title.infos' "$TARGET" || true
+
+  if grep -Fq 'class="collection-info-toggle"' "$TARGET" &&
+     grep -Fq 'collection-info-summary' "$TARGET" &&
+     grep -Fq '</details>' "$TARGET"; then
+    log "Simple collection info toggle patch applied successfully"
+  else
+    fail "Simple collection info toggle patch verification failed"
+  fi
+}
+
 patch_php_thumbnails
 patch_collection_entity_size
 patch_collection_editor_js
 patch_collection_editor_css
 patch_collection_page_order
+patch_collection_info_toggle
 
 exec sh /app/public/docker/entrypoint.sh

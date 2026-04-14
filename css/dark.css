@@ -47,14 +47,16 @@
     --collection-item-width: 250px;
     --collection-img-border-rad: 7%;
 
+    --slider-img-border-rad: 10px;
+    --slider-img-max-width: 400px;
     --slider-thumb-size: 100px;
     --slider-thumb-radius: 8px;
+  
 }
 
-
-/* -------------------------------------------------------------------------- */
-/* Top level adjustments                                                      */
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------- */
+/* Top level adjustments                                                */
+/* -------------------------------------------------------------------- */
 
 /* Reduce main content padding on smaller screens */
 .content-wrapper .container-fluid {
@@ -92,10 +94,9 @@ h2.header, h3.header {
     padding-bottom: var(--section-padding-bottom);
 }
 
-
-/* -------------------------------------------------------------------------- */
-/* sub-collections thumbnail sizing                                           */
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------- */
+/* sub-collections thumbnail sizing                                     */
+/* -------------------------------------------------------------------- */
 
 .grid-container-collections {
     display: grid;
@@ -158,9 +159,9 @@ h2.header, h3.header {
     }
 }
 
-/* -------------------------------------------------------------------------- */
-/* items thumbnail sizing                                                     */
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------- */
+/* items thumbnail sizing                                               */
+/* -------------------------------------------------------------------- */
 
 /* auto-fit for small lists */
 .grid-container-items {
@@ -246,9 +247,9 @@ h2.header, h3.header {
 }
 }
 
-/* -------------------------------------------------------------------------- */
-/* Item detail data panel                                                     */
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------- */
+/* Item detail data panel                                               */
+/* -------------------------------------------------------------------- */
 .data {
     width: min(100%, var(--data-panel-width)) !important;
     max-width: var(--data-panel-width) !important;
@@ -354,18 +355,18 @@ h2.header, h3.header {
     content: ", " !important;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Item page slider thumbnail media                                           */
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------- */
+/* Item page slider thumbnail media                                     */
+/* -------------------------------------------------------------------- */
 
 /* Leave the original strip layout alone, only normalize the media itself */
 .slider-elements img,
 .slider-elements video {
     display: block !important;
-    width: 100px !important;
-    height: 100px !important;
+    width: var(--slider-thumb-size) !important;
+    height: var(--slider-thumb-size) !important;
     object-fit: cover !important;
-    border-radius: 8px !important;
+    border-radius: var(--slider-thumb-radius) !important;
     vertical-align: middle !important;
 }
 
@@ -397,4 +398,34 @@ h2.header, h3.header {
     font-size: 22px;
     color: rgba(255, 255, 255, 0.85);
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Main image size */
+.slider-container .slider-frame img, .slider-container .slider-frame video {
+    max-width: var(--slider-img-max-width);
+    width: 100%;
+    border-radius: var(--slider-img-border-rad);
+}
+
+/* -------------------------------------------------------------------- */
+/* Collection page Info section toggle                                  */
+/* -------------------------------------------------------------------- */
+
+.collection-info-toggle {
+    display: block !important;
+}
+
+.collection-info-summary {
+    cursor: pointer !important;
+    user-select: none !important;
+    margin: 0 !important;
+    padding: var(--section-header-padding-top) 0 var(--section-header-padding-bottom) 0 !important;
+    color: var(--secondary-color) !important;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.collection-info-toggle > .row {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
