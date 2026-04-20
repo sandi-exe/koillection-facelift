@@ -20,7 +20,7 @@ I use Koillection to manage very small collections.  I wanted the layout to look
 
 ## Installation 
 
-- Download the latest release package to your local machine
+- Download the [latest release package](//github.com/sandi-exe/koillection-facelift/releases/latest) of this project to your local machine
 - Set the Theme to `dark` in your your Koillection > Settings `https://<your domain>/settings`
 - Copy the contents of dark.css from the ccs directory of the latest release package to the "Custom CSS dark for dark theme" section of your Koillection Administration > Configuration page `https://<your domain>/admin/configuration`
 - Copy `docker-compose.override.yml` and `patch-and-start.sh` from the docker directory of the latest release package to your koillection docker directory (the same directory as koillections's docker-compose.yml file)
