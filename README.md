@@ -18,13 +18,11 @@ I use Koillection to manage very small collections.  I wanted the layout to look
 
 ![Screenshot - item with sub-collections](images/zx4rr-screenshot.PNG) ![Screenshot - item details](images/watche-screenshot.PNG) ![Screenshot - items list](images/watches-screenshot.PNG)
 
-[text](images)
-
 ## Installation 
 
 - Download the latest release package to your local machine
 - Set the Theme to `dark` in your your Koillection > Settings `https://<your domain>/settings`
 - Copy the contents of dark.css from the ccs directory of the latest release package to the "Custom CSS dark for dark theme" section of your Koillection Administration > Configuration page `https://<your domain>/admin/configuration`
-- Copy docker-compose.override.yml and patch-and-start.sh from the docker directory of the latest release package to your koillection docker directory
+- Copy `docker-compose.override.yml` and `patch-and-start.sh` from the docker directory of the latest release package to your koillection docker directory
 - Restart your koillection container usually  `docker-compose down` then `docker-compose up -d`
 - Thats it!
