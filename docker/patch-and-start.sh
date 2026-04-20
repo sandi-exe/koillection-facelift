@@ -1,12 +1,6 @@
 #!/bin/sh
 set -eu
 
-PHP_TARGET="/app/public/src/Service/ImageHandler.php"
-
-ORIGINAL_SMALL='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $smallThumbnailFileName, 300, $thumbnailFormat)'
-ORIGINAL_LARGE='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $largeThumbnailFileName, 600, $thumbnailFormat)'
-PATCHED_SMALL='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $smallThumbnailFileName, 450, $thumbnailFormat)'
-PATCHED_LARGE='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $largeThumbnailFileName, 900, $thumbnailFormat)'
 
 log() {
   printf '[patch-n-start] %s\n' "$1"
@@ -16,6 +10,14 @@ fail() {
   printf '[patch-n-start] PATCH ERROR: %s\n' "$1" >&2
   exit 1
 }
+
+# Generate Larger Thumbnails
+
+PHP_TARGET="/app/public/src/Service/ImageHandler.php"
+ORIGINAL_SMALL='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $smallThumbnailFileName, 300, $thumbnailFormat)'
+ORIGINAL_LARGE='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $largeThumbnailFileName, 600, $thumbnailFormat)'
+PATCHED_SMALL='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $smallThumbnailFileName, 450, $thumbnailFormat)'
+PATCHED_LARGE='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $largeThumbnailFileName, 900, $thumbnailFormat)'
 
 patch_php_thumbnails() {
   [ -f "$PHP_TARGET" ] || fail "Target file not found: $PHP_TARGET"
@@ -38,6 +40,8 @@ patch_php_thumbnails() {
   fi
 }
 
+# Force the collection thumbnail editor to make square thumbnails
+
 patch_collection_editor_js() {
   JS_FILES="$(grep -Ril 'size:{width:200,height:200}' /app/public/public/build 2>/dev/null || true)"
   log "JS files found: $JS_FILES"
@@ -57,6 +61,8 @@ patch_collection_editor_js() {
   done
 }
 
+# Force the collection thumbnail editor to make square thumbnails (css patch)
+
 patch_collection_editor_css() {
   CSS_FILES="$(grep -Ril 'croppie-preview img{border-radius:100%' /app/public/public/build 2>/dev/null || true)"
   log "CSS files found: $CSS_FILES"
@@ -70,6 +76,8 @@ patch_collection_editor_css() {
     sed -i 's/\.cr-vp-circle\.fa:before{/\.cr-viewport.fa:before{/g' "$f"
   done
 }
+
+# Force the collection thumbnail editor to make larger thumbnails
 
 patch_collection_entity_size() {
   TARGET="/app/public/src/Entity/Collection.php"
@@ -94,6 +102,8 @@ patch_collection_entity_size() {
     fail "Collection.php does not match expected upstream or patched code. Upstream may have changed."
   fi
 }
+
+# Move the Info section to the bottom of the page
 
 patch_collection_page_order() {
   TARGET="/app/public/templates/App/Collection/show.html.twig"
@@ -153,6 +163,8 @@ patch_collection_page_order() {
     fail "Collection page order patch verification failed"
   fi
 }
+
+# Hide Info section by default
 
 patch_collection_info_toggle() {
   TARGET="/app/public/templates/App/Collection/show.html.twig"
@@ -260,6 +272,8 @@ patch_collection_info_toggle() {
     fail "Simple collection info toggle patch verification failed"
   fi
 }
+
+# Show very wide list thumbnails in orginal aspect ratio
 
 patch_collection_item_ultrawide_js() {
   TARGET="/app/public/templates/App/Collection/show.html.twig"
