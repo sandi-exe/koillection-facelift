@@ -23,6 +23,6 @@ I use Koillection to manage very small collections.  I wanted the layout to look
 - Download the latest release package to your local machine
 - Set the Theme to `dark` in your your Koillection > Settings `https://<your domain>/settings`
 - Copy the contents of dark.css from the ccs directory of the latest release package to the "Custom CSS dark for dark theme" section of your Koillection Administration > Configuration page `https://<your domain>/admin/configuration`
-- Copy `docker-compose.override.yml` and `patch-and-start.sh` from the docker directory of the latest release package to your koillection docker directory
+- Copy `docker-compose.override.yml` and `patch-and-start.sh` from the docker directory of the latest release package to your koillection docker directory (the same directory as koillections's docker-compose.yml file)
 - Restart your koillection container usually  `docker-compose down` then `docker-compose up -d`
 - Thats it!
