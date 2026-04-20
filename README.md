@@ -1,5 +1,5 @@
 # koillection-facelift
-A UI mod for Koillection, collection manager
+A UI mod for [Koillection, collection manager](https://github.com/benjaminjonard/koillection)
 
 ## Why?
 
