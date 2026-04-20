@@ -16,7 +16,9 @@ I use Koillection to manage very small collections.  I wanted the layout to look
 
 ## Screenshots
 
+![Screenshot - item with sub-collections](images/zx4rr-screenshot.PNG) ![Screenshot - item details](images/watche-screenshot.PNG) ![Screenshot - items list](images/watches-screenshot.PNG)
 
+[text](images)
 
 ## Installation 
 
