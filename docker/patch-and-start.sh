@@ -2,6 +2,7 @@
 set -eu
 
 PHP_TARGET="/app/public/src/Service/ImageHandler.php"
+
 ORIGINAL_SMALL='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $smallThumbnailFileName, 300, $thumbnailFormat)'
 ORIGINAL_LARGE='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $largeThumbnailFileName, 600, $thumbnailFormat)'
 PATCHED_SMALL='generate($absolutePath . '\''/'\'' . $fileName, $absolutePath . '\''/'\'' . $smallThumbnailFileName, 450, $thumbnailFormat)'
@@ -260,11 +261,104 @@ patch_collection_info_toggle() {
   fi
 }
 
+patch_collection_item_ultrawide_js() {
+  TARGET="/app/public/templates/App/Collection/show.html.twig"
+  TMP_FILE="$(mktemp)"
+
+  [ -f "$TARGET" ] || fail "Collection page template not found: $TARGET"
+
+  log "Collection page template found for item aspect script patch: $TARGET"
+
+  if grep -Fq 'collection-item-aspect-patch' "$TARGET"; then
+    log "Collection item aspect script patch already present"
+    rm -f "$TMP_FILE"
+    return
+  fi
+
+  if ! grep -Fq '{% endblock %}' "$TARGET"; then
+    rm -f "$TMP_FILE"
+    fail "Could not find Twig endblock marker in $TARGET"
+  fi
+
+  log "Applying collection item aspect script patch"
+
+  awk '
+  {
+    lines[NR] = $0
+  }
+
+  END {
+    last_endblock = 0
+
+    for (i = 1; i <= NR; i++) {
+      if (index(lines[i], "{% endblock %}") > 0) {
+        last_endblock = i
+      }
+    }
+
+    if (last_endblock == 0) {
+      exit 2
+    }
+
+    for (i = 1; i <= NR; i++) {
+      if (i == last_endblock) {
+        print "    <script id=\"collection-item-aspect-patch\">"
+        print "    document.addEventListener(\"DOMContentLoaded\", function () {"
+        print "      document.querySelectorAll(\"#collection-items .collection-item img\").forEach(function (img) {"
+        print "        function applyAspectClass() {"
+        print "          if (!img.naturalWidth || !img.naturalHeight) return;"
+        print ""
+        print "          var ratio = img.naturalWidth / img.naturalHeight;"
+        print "          var tile = img.closest(\".collection-item\");"
+        print ""
+        print "          if (!tile) return;"
+        print ""
+        print "          if (ratio >= 2.3) {"
+        print "            tile.classList.add(\"is-ultrawide\");"
+        print "          } else {"
+        print "            tile.classList.remove(\"is-ultrawide\");"
+        print "          }"
+        print "        }"
+        print ""
+        print "        if (img.complete) {"
+        print "          applyAspectClass();"
+        print "        } else {"
+        print "          img.addEventListener(\"load\", applyAspectClass, { once: true });"
+        print "        }"
+        print "      });"
+        print "    });"
+        print "    </script>"
+      }
+
+      print lines[i]
+    }
+  }
+  ' "$TARGET" > "$TMP_FILE" || {
+    status=$?
+    rm -f "$TMP_FILE"
+    if [ "$status" -eq 2 ]; then
+      fail "Could not insert collection item aspect script into $TARGET"
+    else
+      fail "awk patch failed unexpectedly while adding collection item aspect script"
+    fi
+  }
+
+  mv "$TMP_FILE" "$TARGET"
+
+  if grep -Fq 'collection-item-aspect-patch' "$TARGET" &&
+     grep -Fq 'tile.classList.add("is-ultrawide")' "$TARGET"; then
+    log "Collection item aspect script patch applied successfully"
+  else
+    fail "Collection item aspect script patch verification failed"
+  fi
+}
+
 patch_php_thumbnails
 patch_collection_entity_size
 patch_collection_editor_js
 patch_collection_editor_css
 patch_collection_page_order
 patch_collection_info_toggle
+patch_collection_item_ultrawide_js
 
 exec sh /app/public/docker/entrypoint.sh

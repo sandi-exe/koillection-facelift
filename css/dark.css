@@ -46,6 +46,7 @@
     --collection-item-height: 250px; /* not needed - see width */
     --collection-item-width: 250px;
     --collection-img-border-rad: 7%;
+    --collection-img-border-rad-px: 4px; /* used on ultra-wide thumbnails */
 
     --slider-img-border-rad: 10px;
     --slider-img-max-width: 400px;
@@ -428,4 +429,50 @@ h2.header, h3.header {
 .collection-info-toggle > .row {
     margin-top: 0 !important;
     padding-top: 0 !important;
+}
+
+/* -------------------------------------------------------------------- */
+/* Show ultra-wide item thumbnails in natural aspect ratio              */
+/* -------------------------------------------------------------------- */
+
+#collection-items .collection-item.is-ultrawide {
+    aspect-ratio: auto;
+    height: auto;
+    align-items: flex-start;
+    overflow: visible;
+}
+
+#collection-items .collection-item.is-ultrawide a {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+#collection-items .collection-item.is-ultrawide img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: var(--collection-img-border-rad-px);
+}
+
+@media (max-width: 749px) {
+    #collection-items .collection-item.is-ultrawide {
+        aspect-ratio: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    #collection-items .collection-item.is-ultrawide a {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    #collection-items .collection-item.is-ultrawide img {
+        width: 100% !important;
+        height: auto !important;
+        object-fit: contain !important;
+        border-radius: var(--collection-img-border-rad-px);
+    }
 }
