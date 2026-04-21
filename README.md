@@ -3,7 +3,7 @@ A UI mod for [Koillection, collection manager](https://github.com/benjaminjonard
 
 ## Why?
 
-I use Koillection to manage very small collections.  I wanted the layout to look better on my phone so I made this mod that optimizes the layout on most phones. It also increases the resolution of thumbnail images as well as so they no longer look pixilated on mobile devices. 
+I use Koillection to manage very small collections.  I wanted the layout to look better on my phone so I made this mod that optimizes the layout on most phones. It also increases the resolution of thumbnail images as well so they no longer look pixilated on mobile devices. 
 
 ## Features
 
