@@ -3,4 +3,3 @@ services:
     entrypoint: ["/bin/sh", "/patch-and-start.sh"]
     volumes:
       - ./patch-and-start.sh:/patch-and-start.sh:ro
-      - ./volumes/koillection/uploads:/uploads
